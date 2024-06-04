@@ -1,0 +1,54 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+<div class="menu">
+	<div class="menu-body">
+		<a href="Account/Login"><ion-icon name="settings-outline"></ion-icon>Account Settings</a>
+		<a href="#"><ion-icon name="chatbox-ellipses-outline"></ion-icon>Give Feedback</a>
+		<a href="#"><ion-icon name="information-circle-outline"></ion-icon>About</a>
+		<a href="#"><ion-icon name="mail-outline"></ion-icon>Support</a>
+	</div>
+
+	<style>
+		.menu {
+			width: 90%;
+			margin-top: 80px;
+			max-width: 320px;
+			background-color: var(--c-bg-primary);
+			transition: background-color .30s ease;
+			border-radius: 15px;
+		}
+
+		.menu-body {
+			padding: 1rem;
+			border-top: 1px solid var(--c-border-primary);
+			transition: border-color .30s ease;
+		}
+
+			.menu-body a {
+				text-decoration: none;
+				color: inherit;
+				display: flex;
+				padding: 0.6rem 0.5rem;
+				border-radius: 4px;
+				font-weight: 500;
+				transition: .30s ease;
+			}
+
+				.menu-body a:hover {
+					background-color: var(--c-bg-secondary);
+				}
+
+		ion-icon {
+			margin-right: 5px;
+			font-size: 20px;
+			margin-top: 2px;
+		}
+	</style>
+</div>
+
+
+

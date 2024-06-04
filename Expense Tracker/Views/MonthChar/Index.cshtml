@@ -1,0 +1,100 @@
+﻿
+@{
+    ViewData["PageTitle"] = "MonthChar";
+    ViewData["PageActionText"] = "MonthChar";
+    ViewData["PageActionUrl"] = "/";
+}
+@*Doughnut and Spline Chart*@
+<div class="row justify-content-center">
+    <div class="widget chart">
+        <form id="chartForm" asp-controller="MonthChar" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="mb-3">
+                <div class='e-btn-group custom-rbt-group'>
+                    <input type="radio" id="radioleft" name="Type" value="Expense"/>
+                    <label class="e-btn" for="radioleft">Expense</label>
+                    <input type="radio" id="radiomiddle" name="Type" value="Income"/>
+                    <label class="e-btn" for="radiomiddle">Income</label>
+                </div>
+                @if (ViewData["PageTitle"]?.ToString() == "MonthChar")
+                {
+                    
+                    <ejs-datepicker id="date"
+                                        placeholder="Select Month and Year"
+                                        floatLabelType="Always"
+                                        format="MMM-yyyy"
+                                        start="Year"
+                                        depth="Year">                                       
+                    </ejs-datepicker>
+                }
+            </div>
+
+         </form> 
+        <div class="p-4">
+            <h5 class="fw-bold" id="selectedDate">Selected Date by month: None</h5>
+        </div>
+        <div class="d-flex justify-content-center align-items-center">
+            <ejs-accumulationchart id="doughnutchart" enableSmartLabels background="#1a222b">
+                <e-accumulation-series-collection>
+                    <e-accumulation-series dataSource="@ViewBag.DoughnutChartData"
+                                           xName="categoryTitleWithIcon" yName="amount"
+                                           innerRadius="60%" legendShape="Circle"
+                                           palettes=@(new string[]{"#0e8d76","#a4b219","#cb9b00","#8a442c","#0454b5","#7d0a0a","#822690","#4c2090","#313e93","#0096ac"})>
+                        <e-accumulationseries-datalabel name="formattedAmount" visible></e-accumulationseries-datalabel>
+                    </e-accumulation-series>
+                </e-accumulation-series-collection>
+                <e-accumulationchart-legendsettings position="Top" toggleVisibility="false">
+                    <e-legendsettings-textstyle color="#fff" size="1rem"></e-legendsettings-textstyle>
+                </e-accumulationchart-legendsettings>
+                <e-accumulationchart-tooltipsettings enable></e-accumulationchart-tooltipsettings>
+            </ejs-accumulationchart>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('chartForm');
+            const radioButtons = form.querySelectorAll('input[name="Type"]');
+            const datePicker = document.getElementById('date');
+            // const formChartDateInput = document.getElementById('formChartDateInput');
+
+            function checkAndSubmitForm() {
+                const isTypeSelected = Array.from(radioButtons).some(radio => radio.checked);
+                const isDateSelected = datePicker && datePicker.value !== '';
+
+                if (isTypeSelected && isDateSelected) {
+                    form.submit();
+                }
+            }
+
+            // function updateDateDisplay() {
+            //     if (datePicker && datePicker.value) {
+            //         formChartDateInput.value = datePicker.value;
+            //     } else {
+            //         formChartDateInput.value = '';
+            //     }
+            //     checkAndSubmitForm(); // Check and submit form when date changes
+            // }
+
+            // if (datePickerElement && datePickerElement.ej2_instances) {
+            //     const datePickerInstance = datePickerElement.ej2_instances[0];
+
+            //     if (!datePickerInstance.value) {
+            //         const currentDate = new Date();
+            //         datePickerInstance.value = currentDate;
+            //         datePickerInstance.dataBind(); // Ensure the date picker updates with the new value
+            //     }
+            // }
+
+            radioButtons.forEach(radio => {
+                radio.addEventListener('change', checkAndSubmitForm);
+            });
+
+            if (datePicker) {
+                datePicker.addEventListener('change', checkAndSubmitForm);
+            }
+        });
+    </script>
+}
