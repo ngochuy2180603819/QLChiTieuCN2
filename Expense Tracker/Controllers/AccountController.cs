@@ -15,6 +15,17 @@ namespace Expense_Tracker.Controllers
             _signInManager = signInManager;
             _userManager = userManager;
         }
+
+        public async Task<IActionResult> Index()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return RedirectToAction(nameof(Login));
+            }
+            return View();
+
+        }
         public IActionResult Login(string? returnUrl = null)
         {
             return View();

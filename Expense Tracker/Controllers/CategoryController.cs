@@ -27,26 +27,25 @@ namespace Expense_Tracker.Controllers
         // GET: Category
         public async Task<IActionResult> Index()
         {
-            var user = await _userManager.GetUserAsync(User);
-            var userId = user.Id;
+            var userId = _userManager.GetUserId(User);
             var categories = await _context.Categories
                                           .Where(c => c.UserId == userId)
                                           .ToListAsync();
             return categories != null ?
                 View(categories) :
                 Problem("Entity set 'ApplicationDbContext.Categories' is null.");
-
         }
 
 
         // GET: Category/AddOrEdit
-        public IActionResult AddOrEdit(int id = 0)
+        public async Task<IActionResult> AddOrEdit(int id = 0)
         {
+            var userId = _userManager.GetUserId(User);
+            ViewBag.UserId = userId;
             if (id == 0)
-                return View(new Category());
+                return View(new Category { UserId = userId });
             else
-                
-                return View(_context.Categories.Find(id));
+                return View(await _context.Categories.FindAsync(id));
         }
 
         // POST: Category/AddOrEdit
@@ -54,14 +53,16 @@ namespace Expense_Tracker.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddOrEdit([Bind("CategoryId,Title,Icon,Type")] Category category)
+        public async Task<IActionResult> AddOrEdit([Bind("CategoryId,Title,Icon,Type,UserId")] Category category)
         {
-            if (ModelState.IsValid)
+            var userId = _userManager.GetUserId(User);
+            if (ModelState.IsValid) 
             {
+
                 if (category.CategoryId == 0)
                 {
                     var existingCategory = await _context.Categories
-                    .FirstOrDefaultAsync(c => c.Title == category.Title);
+                    .FirstOrDefaultAsync(c => c.Title == category.Title && c.UserId == category.UserId);
                     if (existingCategory != null)
                     {
                         ModelState.AddModelError("", "Title already exists");
@@ -83,17 +84,17 @@ namespace Expense_Tracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Categories == null)
-            {
-                return Problem("Entity set 'ApplicationDbContext.Categories'  is null.");
-            }
-            var category = await _context.Categories.FindAsync(id);
+            var user = await _userManager.GetUserAsync(User);
+            var userId = user.Id;
+            var category = await _context.Categories
+                .FirstOrDefaultAsync(c => c.CategoryId == id && c.UserId == userId);
+
             if (category != null)
             {
                 _context.Categories.Remove(category);
+                await _context.SaveChangesAsync();
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 

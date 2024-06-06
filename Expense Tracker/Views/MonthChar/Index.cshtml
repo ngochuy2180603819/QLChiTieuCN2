@@ -1,8 +1,7 @@
-﻿
-@{
+﻿@{
     ViewData["PageTitle"] = "MonthChar";
-    ViewData["PageActionText"] = "MonthChar";
-    ViewData["PageActionUrl"] = "/";
+    ViewData["PageActionText"] = "YearChar";
+    ViewData["PageActionUrl"] = "/YearChar";
 }
 @*Doughnut and Spline Chart*@
 <div class="row justify-content-center">
@@ -11,27 +10,30 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="mb-3">
                 <div class='e-btn-group custom-rbt-group'>
-                    <input type="radio" id="radioleft" name="Type" value="Expense"/>
+                    <input type="radio" id="radioleft" name="Type" value="Expense" @* @(ViewBag.Type == null || ViewBag.Type == "Expense" ? "checked" : "") *@ />
                     <label class="e-btn" for="radioleft">Expense</label>
-                    <input type="radio" id="radiomiddle" name="Type" value="Income"/>
+                    <input type="radio" id="radiomiddle" name="Type" value="Income" @* @(ViewBag.Type == "Income" ? "checked" : "" *@) />
                     <label class="e-btn" for="radiomiddle">Income</label>
                 </div>
                 @if (ViewData["PageTitle"]?.ToString() == "MonthChar")
                 {
-                    
-                    <ejs-datepicker id="date"
-                                        placeholder="Select Month and Year"
-                                        floatLabelType="Always"
-                                        format="MMM-yyyy"
-                                        start="Year"
-                                        depth="Year">                                       
+                    <ejs-datepicker id="SelectedDate"
+                                    placeholder="Select Month and Year"
+                                    floatLabelType="Always"
+                                    format="MMM-yyyy"
+                                    start="Year"
+                                    depth="Year"
+                                    value="ViewBag.SelectedDate">
+
                     </ejs-datepicker>
                 }
             </div>
 
-         </form> 
+        </form>
         <div class="p-4">
-            <h5 class="fw-bold" id="selectedDate">Selected Date by month: None</h5>
+            <h5 class="fw-bold" id="SelectedDateDisplay">
+                Selected Date by month: @(ViewBag.SelectedDate != null ? ((DateTime)ViewBag.SelectedDate).ToString("MMMM yyyy") : "None")
+            </h5>
         </div>
         <div class="d-flex justify-content-center align-items-center">
             <ejs-accumulationchart id="doughnutchart" enableSmartLabels background="#1a222b">
@@ -57,8 +59,22 @@
         document.addEventListener('DOMContentLoaded', function () {
             const form = document.getElementById('chartForm');
             const radioButtons = form.querySelectorAll('input[name="Type"]');
-            const datePicker = document.getElementById('date');
-            // const formChartDateInput = document.getElementById('formChartDateInput');
+            const datePicker = document.getElementById('SelectedDate');
+
+            function getCurrentMonthAndYear() {
+                const now = new Date();
+                const monthNames = [
+                    "January", "February", "March", "April", "May", "June",
+                    "July", "August", "September", "October", "November", "December"
+                ];
+                const month = monthNames[now.getMonth()];
+                const year = now.getFullYear();
+                return ${ month } ${ year };
+            }
+
+            if (!datePicker.value) {
+                datePicker.value = getCurrentMonthAndYear();
+            }
 
             function checkAndSubmitForm() {
                 const isTypeSelected = Array.from(radioButtons).some(radio => radio.checked);
@@ -68,25 +84,6 @@
                     form.submit();
                 }
             }
-
-            // function updateDateDisplay() {
-            //     if (datePicker && datePicker.value) {
-            //         formChartDateInput.value = datePicker.value;
-            //     } else {
-            //         formChartDateInput.value = '';
-            //     }
-            //     checkAndSubmitForm(); // Check and submit form when date changes
-            // }
-
-            // if (datePickerElement && datePickerElement.ej2_instances) {
-            //     const datePickerInstance = datePickerElement.ej2_instances[0];
-
-            //     if (!datePickerInstance.value) {
-            //         const currentDate = new Date();
-            //         datePickerInstance.value = currentDate;
-            //         datePickerInstance.dataBind(); // Ensure the date picker updates with the new value
-            //     }
-            // }
 
             radioButtons.forEach(radio => {
                 radio.addEventListener('change', checkAndSubmitForm);
