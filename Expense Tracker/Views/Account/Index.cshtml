@@ -1,0 +1,50 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+<html>
+<head>
+    <title>Account Page</title>
+    <style>
+        .menu-body a {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .user-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .btnlogout {
+            margin-left: 160px;
+            position: relative;
+            top: -12px;
+        }
+    </style>
+</head>
+<body>
+    @if (SignInManager.IsSignedIn(User))
+    {
+        var user = await UserManager.GetUserAsync(User);
+        <div class="user-container">
+            <div class="user-info">
+                <p>Hello, @user.FirstName @user.LastName!</p>
+            </div>
+            <div class="btnlogout">
+                <form asp-controller="Account" asp-action="Logout" method="post">
+                    <ejs-button id="submit" type="submit" content="Log out" cssClass="e-success"></ejs-button>
+                </form>
+            </div>
+        </div>
+    }
+	<div class="menu">
+		<div class="menu-body">
+			<a href="#"><ion-icon name="chatbox-ellipses-outline"></ion-icon>Give Feedback</a>
+			<a href="#"><ion-icon name="information-circle-outline"></ion-icon>About</a>
+			<a href="#"><ion-icon name="mail-outline"></ion-icon>Support</a>
+		</div>
+	</div>
+</body>
+</html>
