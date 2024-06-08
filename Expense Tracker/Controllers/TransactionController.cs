@@ -26,7 +26,8 @@ namespace Expense_Tracker.Controllers
         // GET: Transaction
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Transactions.Include(t => t.Category);
+			var userId = _userManager.GetUserId(User);
+			var applicationDbContext = _context.Transactions.Include(t => t.Category).Where(t => t.UserId == userId);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -34,10 +35,12 @@ namespace Expense_Tracker.Controllers
         public IActionResult AddOrEdit(int id = 0)
         {
             PopulateCategories();
-            if (id == 0)
-                return View(new Transaction());
+			var userId = _userManager.GetUserId(User);
+			ViewBag.UserId = userId;
+			if (id == 0)
+                return View(new Transaction { UserId = userId });
             else
-                return View(_context.Transactions.Find(id));
+                return View( _context.Transactions.Find(id));
         }
 
         // POST: Transaction/AddOrEdit
@@ -47,9 +50,15 @@ namespace Expense_Tracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddOrEdit([Bind("TransactionId,CategoryId,Amount,Note,Date")] Transaction transaction)
         {
-            if (ModelState.IsValid)
+            ModelState.Remove(nameof(Transaction.UserId));
+            ModelState.Remove(nameof(Transaction.TransactionId));
+
+            var userId = _userManager.GetUserId(User);
+
+			transaction.UserId = userId;
+			if (ModelState.IsValid)
             {
-                if (transaction.TransactionId == 0)
+				if (transaction.TransactionId == 0)
                     _context.Add(transaction);
                 else
                     _context.Update(transaction);
@@ -65,17 +74,19 @@ namespace Expense_Tracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Transactions == null)
+            var userId = _userManager.GetUserId(User);
+			var transaction = await _context.Transactions.FirstOrDefaultAsync(t => t.TransactionId == id && t.UserId == userId);
+			if (transaction == null)
             {
                 return Problem("Entity set 'ApplicationDbContext.Transactions'  is null.");
             }
-            var transaction = await _context.Transactions.FindAsync(id);
             if (transaction != null)
             {
                 _context.Transactions.Remove(transaction);
+                await _context.SaveChangesAsync();
             }
 
-            await _context.SaveChangesAsync();
+            
             return RedirectToAction(nameof(Index));
         }
 
