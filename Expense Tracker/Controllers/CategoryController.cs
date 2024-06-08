@@ -53,25 +53,40 @@ namespace Expense_Tracker.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddOrEdit([Bind("CategoryId,Title,Icon,Type,UserId")] Category category)
+        public async Task<IActionResult> AddOrEdit([Bind("CategoryId,Title,Icon,Type")] Category category)
         {
+            ModelState.Remove(nameof(Category.UserId));
+            ModelState.Remove(nameof(Category.CategoryId));
+            ModelState.Remove(nameof(Category.User));
+
             var userId = _userManager.GetUserId(User);
-            if (ModelState.IsValid) 
+
+            category.UserId = userId;
+            if (ModelState.IsValid)
             {
 
                 if (category.CategoryId == 0)
                 {
                     var existingCategory = await _context.Categories
-                    .FirstOrDefaultAsync(c => c.Title == category.Title && c.UserId == category.UserId);
+                    .FirstOrDefaultAsync(c => c.Title == category.Title);
                     if (existingCategory != null)
                     {
-                        ModelState.AddModelError("", "Title already exists");
+                        ModelState.AddModelError("error", "Title already exists");
                         return View(category);
                     }
                     _context.Add(category);
                 }
                 else
-                    _context.Update(category);
+                {
+					var existingCategory = await _context.Categories
+				   .FirstOrDefaultAsync(c => c.Title == category.Title);
+					if (existingCategory != null)
+					{
+						ModelState.AddModelError("error", "Title already exists");
+						return View(category);
+					}
+					_context.Update(category);
+                }
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
