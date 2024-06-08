@@ -2,6 +2,7 @@
 
 @{
     ViewData["PageTitle"] = Model.TransactionId == 0 ? "Create a new transaction" : "Edit transaction";
+    var userId = ViewBag.UserId;
 }
 
 <div class="row">
@@ -10,6 +11,7 @@
             <form asp-action="AddOrEdit">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <input type="hidden" name="TransactionId" value="@Model.TransactionId" />
+                <input type="hidden" name="UserId" value="@userId" />
                 <div class="mb-3">
                     <ejs-datepicker id="date" ejs-for="Date"
                                     placeholder="Date" floatLabelType="Always"

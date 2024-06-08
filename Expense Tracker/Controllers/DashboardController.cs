@@ -1,4 +1,5 @@
 ﻿using Expense_Tracker.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
@@ -9,21 +10,24 @@ namespace Expense_Tracker.Controllers
     {
 
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public DashboardController(ApplicationDbContext context)
+        public DashboardController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         public async Task<ActionResult> Index()
         {
+            var userId = _userManager.GetUserId(User);
             //Last 7 Days
             DateTime StartDate = DateTime.Today.AddDays(-6);
             DateTime EndDate = DateTime.Today;
 
             List<Transaction> SelectedTransactions = await _context.Transactions
                 .Include(x => x.Category)
-                .Where(y => y.Date >= StartDate && y.Date <= EndDate)
+                .Where(y => y.UserId == userId && y.Date >= StartDate && y.Date <= EndDate)
                 .ToListAsync();
 
             //Total Income
@@ -100,6 +104,7 @@ namespace Expense_Tracker.Controllers
             //Recent Transactions
             ViewBag.RecentTransactions = await _context.Transactions
                 .Include(i => i.Category)
+                .Where(t => t.UserId == userId)
                 .OrderByDescending(j => j.Date)
                 .Take(5)
                 .ToListAsync();

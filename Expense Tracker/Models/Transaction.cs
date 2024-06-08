@@ -37,6 +37,7 @@ namespace Expense_Tracker.Models
                 return ((Category == null || Category.Type == "Expense") ? "- " : "+ ") + Amount.ToString("C0");
             }
         }
+		public string UserId { get; set; }
 
-    }
+	}
 }
