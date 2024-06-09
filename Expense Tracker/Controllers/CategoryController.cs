@@ -68,7 +68,7 @@ namespace Expense_Tracker.Controllers
                 if (category.CategoryId == 0)
                 {
                     var existingCategory = await _context.Categories
-                    .FirstOrDefaultAsync(c => c.Title == category.Title);
+                    .FirstOrDefaultAsync(c => c.Title == category.Title && c.UserId == userId);
                     if (existingCategory != null)
                     {
                         ModelState.AddModelError("error", "Title already exists");
@@ -79,7 +79,7 @@ namespace Expense_Tracker.Controllers
                 else
                 {
 					var existingCategory = await _context.Categories
-				   .FirstOrDefaultAsync(c => c.Title == category.Title);
+				   .FirstOrDefaultAsync(c => c.Title == category.Title && c.UserId == userId && c.CategoryId != category.CategoryId);
 					if (existingCategory != null)
 					{
 						ModelState.AddModelError("error", "Title already exists");
