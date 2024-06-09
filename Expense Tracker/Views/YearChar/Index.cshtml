@@ -1,23 +1,23 @@
 ﻿@{
-    ViewData["PageTitle"] = "Month chart";
-    ViewData["PageActionText"] = "Year chart";
-    ViewData["PageActionUrl"] = "/YearChar";
+    ViewData["PageTitle"] = "Year chart";
+    ViewData["PageActionText"] = "Month chart";
+    ViewData["PageActionUrl"] = "/MonthChar";
 }
 @*Doughnut and Spline Chart*@
 <div class="row justify-content-center">
     <div class="widget chart">
-        <form id="chartForm" asp-controller="MonthChar" method="post">
+        <form id="Form" asp-controller="YearChar" method="post">
             <div asp-validation-summary="All" class="text-danger"></div>
             <div class="mb-3">
                 
-                @if (ViewData["PageTitle"]?.ToString() == "Month chart")
+                @if (ViewData["PageTitle"]?.ToString() == "Year chart")
                 {
-                    <ejs-datepicker id="SelectedDate"
-                                    placeholder="Select Month and Year"
+                    <ejs-datepicker id="Selected"
+                                    placeholder="Select Year"
                                     floatLabelType="Always"
-                                    format="MMM-yyyy"
-                                    start="Year"
-                                    depth="Year"
+                                    format="yyyy"
+                                    start="Decade"
+                                    depth="Decade"
                                     value="ViewBag.SelectedDate">
                     </ejs-datepicker>
                 }
@@ -32,7 +32,7 @@
         </form>
         <div class="p-4">
             <h5 class="fw-bold" id="SelectedDateDisplay">
-                Selected: @(ViewBag.Type) @(ViewBag.SelectedDate != null ? ((DateTime)ViewBag.SelectedDate).ToString("MMMM yyyy") : "None")
+                Selected Date by month: @(ViewBag.Selected != null ? ((DateTime)ViewBag.Selected).ToString("yyyy") : "None")
             </h5>
         </div>
         <div class="d-flex justify-content-center align-items-center">
@@ -57,19 +57,14 @@
 @section Scripts {
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const form = document.getElementById('chartForm');
+            const form = document.getElementById('Form');
             const radioButtons = form.querySelectorAll('input[name="Type"]');
-            const datePicker = document.getElementById('SelectedDate');
+            const datePicker = document.getElementById('Selected');
 
             function getCurrentMonthAndYear() {
                 const now = new Date();
-                const monthNames = [
-                    "January", "February", "March", "April", "May", "June",
-                    "July", "August", "September", "October", "November", "December"
-                ];
-                const month = monthNames[now.getMonth()];
                 const year = now.getFullYear();
-                return `${month} ${year}`;
+                return year;
             }
 
             if (!datePicker.value) {
@@ -89,7 +84,7 @@
                 radio.addEventListener('change', checkAndSubmitForm);
             });
 
-            if (datePicker) {
+            if (datePicker == true) {
                 datePicker.addEventListener('change', checkAndSubmitForm);
             }
         });
