@@ -29,5 +29,6 @@ namespace Expense_Tracker.Models
         [Display(Name = "Confirm Password")]
         [DataType(DataType.Password)]
         public string ConfirmPassword { get; set; }
+        public IFormFile ProfilePicture { get; set; }
     }
 }

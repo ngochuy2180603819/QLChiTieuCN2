@@ -71,7 +71,7 @@ namespace Expense_Tracker.Controllers
                     .FirstOrDefaultAsync(c => c.Title == category.Title && c.UserId == userId);
                     if (existingCategory != null)
                     {
-                        ModelState.AddModelError("error", "Title already exists");
+                        ModelState.AddModelError("", "Title already exists");
                         return View(category);
                     }
                     _context.Add(category);
@@ -82,7 +82,7 @@ namespace Expense_Tracker.Controllers
 				   .FirstOrDefaultAsync(c => c.Title == category.Title && c.UserId == userId && c.CategoryId != category.CategoryId);
 					if (existingCategory != null)
 					{
-						ModelState.AddModelError("error", "Title already exists");
+						ModelState.AddModelError("", "Title already exists");
 						return View(category);
 					}
 					_context.Update(category);

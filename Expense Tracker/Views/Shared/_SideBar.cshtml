@@ -1,4 +1,7 @@
-﻿@*
+﻿@using Microsoft.AspNetCore.Identity;
+@inject SignInManager<ApplicationUser> signInManager
+@inject UserManager<ApplicationUser> userManager
+@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
@@ -17,6 +20,12 @@
     });
     menuItems.Add(new
     {
+        text = "Month/Year",
+        iconCss = "fa-solid fa-chart-pie",
+        url = "/MonthChar"
+    });
+    menuItems.Add(new
+    {
         text = "Categories",
         url = "/Category",
         iconCss = "fa-solid fa-folder-closed",
@@ -28,12 +37,7 @@
         url = "/Transaction"
     });
 
-    menuItems.Add(new
-    {
-        text = "Month/Year",
-        iconCss = "fa-solid fa-chart-pie",
-        url = "/MonthChar"
-    });
+    
     menuItems.Add(new
     {
         text = "Extras",
@@ -64,7 +68,12 @@
             <img class="profile-pic" src="~/profile1.jpg" />
             <div class="titles d-flex flex-column ps-3">
                 <h6 class="mb-0">Expense App</h6>
-                <span class="text-muted">UserName</span>
+                @if (signInManager.IsSignedIn(User))
+                {
+                    var user = await userManager.GetUserAsync(User);
+                    <span class="text-muted">@user.FirstName @user.LastName</span>
+                }
+                
             </div>
         </div>
 

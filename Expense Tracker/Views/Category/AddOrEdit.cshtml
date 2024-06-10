@@ -28,7 +28,7 @@
 				<div class="mb-3">
 					<ejs-textbox id="icon" placeholder="Icon" ejs-for="Icon" floatLabelType="Always"></ejs-textbox>
 				</div>
-				@if (ViewData.ModelState.Count > 0)
+				@* @if (ViewData.ModelState.Count > 0)
 				{
 					<ul class="py-3">
 						@foreach (var error in ViewData.ModelState)
@@ -39,7 +39,7 @@
 							}
 						}
 					</ul>
-				}
+				} *@
 				<ejs-button id="submit" type="submit" content="Submit" cssClass="e-success"></ejs-button>
 			</form>
 		</div>

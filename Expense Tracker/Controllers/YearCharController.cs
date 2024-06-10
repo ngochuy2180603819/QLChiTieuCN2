@@ -22,25 +22,15 @@ namespace Expense_Tracker.Controllers
         public async Task<IActionResult> IndexAsync(DateTime? Selected, String type)
         {
             var userId = _userManager.GetUserId(User);
-            DateTime StartDate;
-            DateTime EndDate;
+            DateTime time= new DateTime(DateTime.Today.Year);
 
             if (Selected.HasValue)
             {
-                StartDate = new DateTime(Selected.Value.Year, 1, 1);
-                EndDate = StartDate.AddYears(1).AddDays(-1);
-
-            }
-            else
-            {
-                StartDate = new DateTime(DateTime.Today.Year, 1, 1);
-                EndDate = StartDate.AddYears(1).AddDays(-1);
-
+                time = new DateTime(Selected.Value.Year);
                 List<Transaction> selectedTransactions = await _context.Transactions
                         .Include(x => x.Category)
-                        .Where(y => y.UserId == userId && y.Date >= StartDate && y.Date <= EndDate)
+                        .Where(y => y.UserId == userId && y.Date.Year == Selected.Value.Year)
                         .ToListAsync();
-
                 if (type == "Expense" || type == "Income")
                 {
                     // Prepare data for the doughnut chart
@@ -61,9 +51,11 @@ namespace Expense_Tracker.Controllers
                     // Invalid type provided
                     ViewBag.DoughnutChartData = null;
                 }
+
             }
 
-            ViewBag.SelectedDate = Selected;
+
+            ViewBag.Selected = Selected;
             ViewBag.Type = type;
 
             return View();
