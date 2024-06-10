@@ -47,6 +47,12 @@
                         <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                     </div>
                     <div class="form-group">
+                        <label asp-for="ProfilePicture" class="control-label">Profile Picture</label>
+                        <input type="file" asp-for="ProfilePicture" class="form-control-file" />
+                        <span asp-validation-for="ProfilePicture" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
                         <input type="submit" value="Signup" class="btn btn-primary" />
                     </div>
                 </form>
