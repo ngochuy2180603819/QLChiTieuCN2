@@ -1,12 +1,23 @@
 ﻿@using Microsoft.AspNetCore.Identity;
 @inject SignInManager<ApplicationUser> signInManager
 @inject UserManager<ApplicationUser> userManager
-@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
 @{
     List<Object> menuItems = new List<Object>();
 
+    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+    {
+        menuItems.Add(new
+        {
+            text = "Admin Page",
+            separator = true,
+        });
+        menuItems.Add(new
+        {
+            text = "Admin",
+            url = "/Admin",
+            iconCss = "fa-solid fa-user-tie",
+        });
+    }
     menuItems.Add(new
     {
         text = "General",
@@ -16,13 +27,7 @@
     {
         text = "Dashboard",
         url = "/",
-        iconCss ="fa-solid fa-table-columns",
-    });
-    menuItems.Add(new
-    {
-        text = "Month/Year",
-        iconCss = "fa-solid fa-chart-pie",
-        url = "/MonthChar"
+        iconCss = "fa-solid fa-table-columns",
     });
     menuItems.Add(new
     {
@@ -37,10 +42,16 @@
         url = "/Transaction"
     });
 
-    
     menuItems.Add(new
     {
-        text = "Extras",
+        text = "Month/Year",
+        iconCss = "fa-solid fa-chart-pie",
+        url = "/MonthChar"
+    });
+
+    menuItems.Add(new
+    {
+        text = "User",
         separator = true,
     });
     menuItems.Add(new
@@ -50,7 +61,6 @@
         url = "/Account"
     });
 }
-
 
 <ejs-sidebar id="sidebar" width="290px" enableDock dockSize="100px"
             target=".dock-target" enableGestures="false">
@@ -65,15 +75,17 @@
         </div>
 
         <div class="profile-wrapper">
-            <img class="profile-pic" src="~/profile1.jpg" />
+            @{
+                var user = await userManager.GetUserAsync(User);
+                var profilePictureUrl = user?.ProfilePicture ?? Url.Content("~/profile1.jpg");
+            }
+            <img class="profile-pic" src="@profilePictureUrl" alt="" />
             <div class="titles d-flex flex-column ps-3">
                 <h6 class="mb-0">Expense App</h6>
                 @if (signInManager.IsSignedIn(User))
                 {
-                    var user = await userManager.GetUserAsync(User);
-                    <span class="text-muted">@user.FirstName @user.LastName</span>
+                    <span class="text-muted">@user?.FirstName @user?.LastName</span>
                 }
-                
             </div>
         </div>
 
