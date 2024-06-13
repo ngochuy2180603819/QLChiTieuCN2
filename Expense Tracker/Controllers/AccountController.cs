@@ -77,12 +77,13 @@ namespace Expense_Tracker.Controllers
 
                     profilePicture = "/uploads/" + fileName;
                 }
-                    ApplicationUser user = new()
+                ApplicationUser user = new()
                 {
                     FirstName = model.FirstName,
                     LastName = model.LastName,
                     Email = model.Email,
                     UserName = model.Email,
+                    ProfilePicture = profilePicture,
                 };
 
                 var result = await _userManager.CreateAsync(user, model.Password!);
@@ -100,8 +101,12 @@ namespace Expense_Tracker.Controllers
             }
             return View(model);
         }
-
-        public async Task<IActionResult> Logout()
+		[AllowAnonymous]
+		public IActionResult AccessDenied()
+		{
+			return View();
+		}
+		public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Dashboard");
@@ -124,7 +129,7 @@ namespace Expense_Tracker.Controllers
                 {
                     ViewBag.IsSuccess = true;
                     ModelState.Clear();
-                    return View();
+                    return RedirectToAction("Index", "Account");
                 }
 
                 foreach (var error in result.Errors)
